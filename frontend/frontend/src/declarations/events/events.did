@@ -1,0 +1,159 @@
+type VerifyTicketResponse = 
+ variant {
+   err: VerifyTicketError;
+   ok: bool;
+ };
+type VerifyTicketRequest = record {ticketId: TicketId;};
+type VerifyTicketError = 
+ variant {
+   eventNotActive;
+   eventNotFound;
+   systemError;
+   ticketNotFound;
+   userNotAuthenticated;
+ };
+type Ticket__1 = 
+ record {
+   eventId: EventId;
+   id: TicketId;
+   isUsed: bool;
+   metadata: TicketMetadata;
+   mintedAt: int;
+   owner: principal;
+   ticketTypeId: TicketTypeId;
+ };
+type TicketTypeId = text;
+type TicketType = 
+ record {
+   capacity: nat;
+   description: opt text;
+   id: TicketTypeId;
+   name: text;
+   price: nat;
+   sold: nat;
+ };
+type TicketMetadata = 
+ record {
+   attributes: vec record {
+                     text;
+                     text;
+                   };
+   description: text;
+   imageUrl: opt text;
+   name: text;
+ };
+type TicketId__1 = text;
+type TicketId = text;
+type Ticket = 
+ record {
+   eventId: EventId;
+   id: TicketId;
+   isUsed: bool;
+   metadata: TicketMetadata;
+   mintedAt: int;
+   owner: principal;
+   ticketTypeId: TicketTypeId;
+ };
+type Result = 
+ variant {
+   err: CreateEventError__1;
+   ok: bool;
+ };
+type MintTicketResponse = 
+ variant {
+   err: MintTicketError;
+   ok: Ticket;
+ };
+type MintTicketRequest = 
+ record {
+   eventId: EventId;
+   ticketTypeId: TicketTypeId;
+ };
+type MintTicketError = 
+ variant {
+   eventNotActive;
+   eventNotFound;
+   soldOut;
+   systemError;
+   ticketTypeNotFound;
+   userNotAuthenticated;
+ };
+type GetEventsResponse = 
+ variant {
+   err: GetEventsError;
+   ok: vec Event;
+ };
+type GetEventsError = variant {systemError;};
+type GetEventResponse = 
+ variant {
+   err: GetEventError;
+   ok: Event;
+ };
+type GetEventError = variant {eventNotFound;};
+type EventStatus = 
+ variant {
+   active;
+   cancelled;
+   completed;
+ };
+type EventId__1 = text;
+type EventId = text;
+type Event = 
+ record {
+   artStyle: text;
+   date: text;
+   description: text;
+   id: EventId;
+   imageUrl: opt text;
+   location: text;
+   name: text;
+   organizer: principal;
+   status: EventStatus;
+   ticketTypes: vec TicketType;
+   time: text;
+ };
+type CreateEventResponse = 
+ variant {
+   err: CreateEventError;
+   ok: Event;
+ };
+type CreateEventRequest = 
+ record {
+   artStyle: text;
+   date: text;
+   description: text;
+   imageUrl: opt text;
+   location: text;
+   name: text;
+   ticketTypes:
+    vec record {
+          capacity: nat;
+          description: opt text;
+          name: text;
+          price: nat;
+        };
+   time: text;
+ };
+type CreateEventError__1 = 
+ variant {
+   invalidInput;
+   systemError;
+   userNotAuthenticated;
+ };
+type CreateEventError = 
+ variant {
+   invalidInput;
+   systemError;
+   userNotAuthenticated;
+ };
+service : {
+  cancelEvent: (EventId__1) -> (Result);
+  createEvent: (CreateEventRequest) -> (CreateEventResponse);
+  getAllEvents: () -> (GetEventsResponse) query;
+  getEvent: (EventId__1) -> (GetEventResponse) query;
+  getOrganizerEvents: () -> (GetEventsResponse) query;
+  getTicket: (TicketId__1) -> (opt Ticket__1) query;
+  getUserTickets: () -> (vec Ticket__1) query;
+  mintTicket: (MintTicketRequest) -> (MintTicketResponse);
+  verifyTicket: (VerifyTicketRequest) -> (VerifyTicketResponse);
+}

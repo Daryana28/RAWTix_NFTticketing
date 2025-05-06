@@ -1,0 +1,44 @@
+type Result = 
+ variant {
+   err: variant {
+          profileNotFound;
+          userNotAuthenticated;
+        };
+   ok: bool;
+ };
+type Profile__1 = 
+ record {
+   bio: text;
+   username: text;
+ };
+type Profile = 
+ record {
+   bio: text;
+   username: text;
+ };
+type GetProfileResponse = 
+ variant {
+   err: GetProfileError;
+   ok: Profile__1;
+ };
+type GetProfileError = 
+ variant {
+   profileNotFound;
+   userNotAuthenticated;
+ };
+type CreateProfileResponse = 
+ variant {
+   err: CreateProfileError;
+   ok: bool;
+ };
+type CreateProfileError = 
+ variant {
+   profileAlreadyExists;
+   userNotAuthenticated;
+ };
+service : {
+  createProfile: (text, text) -> (CreateProfileResponse);
+  getProfile: () -> (GetProfileResponse) query;
+  getProfileByPrincipal: (principal) -> (opt Profile) query;
+  updateProfile: (text, text) -> (Result);
+}

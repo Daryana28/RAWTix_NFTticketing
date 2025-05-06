@@ -1,0 +1,76 @@
+type VerifyTicketResponse = 
+ variant {
+   err: VerifyTicketError;
+   ok: bool;
+ };
+type VerifyTicketRequest = record {ticketId: TicketId;};
+type VerifyTicketError = 
+ variant {
+   eventNotActive;
+   eventNotFound;
+   systemError;
+   ticketNotFound;
+   userNotAuthenticated;
+ };
+type TicketTypeId__1 = text;
+type TicketTypeId = text;
+type TicketMetadata__1 = 
+ record {
+   attributes: vec record {
+                     text;
+                     text;
+                   };
+   description: text;
+   imageUrl: opt text;
+   name: text;
+ };
+type TicketMetadata = 
+ record {
+   attributes: vec record {
+                     text;
+                     text;
+                   };
+   description: text;
+   imageUrl: opt text;
+   name: text;
+ };
+type TicketId__1 = text;
+type TicketId = text;
+type Ticket = 
+ record {
+   eventId: EventId__1;
+   id: TicketId;
+   isUsed: bool;
+   metadata: TicketMetadata__1;
+   mintedAt: int;
+   owner: principal;
+   ticketTypeId: TicketTypeId__1;
+ };
+type Result_1 = 
+ variant {
+   err: variant {
+          systemError;
+          userNotAuthenticated;
+        };
+   ok: TicketId__1;
+ };
+type Result = 
+ variant {
+   err: variant {
+          systemError;
+          ticketNotFound;
+          userNotAuthenticated;
+        };
+   ok: bool;
+ };
+type EventId__1 = text;
+type EventId = text;
+service : {
+  getTicket: (TicketId__1) -> (opt Ticket) query;
+  getUserTickets: () -> (vec Ticket) query;
+  isTicketValid: (TicketId__1) -> (bool) query;
+  mintTicket: (EventId, TicketTypeId, principal, TicketMetadata) ->
+   (Result_1);
+  transferTicket: (TicketId__1, principal) -> (Result);
+  verifyTicket: (VerifyTicketRequest) -> (VerifyTicketResponse);
+}

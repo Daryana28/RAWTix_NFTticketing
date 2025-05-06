@@ -1,0 +1,38 @@
+import principal "mo:base/Principal";
+
+type Profile = record {
+  username: text;
+  bio: text;
+};
+
+type Ticket = record {
+  owner: principal;
+  metadata: vec record { text; text };
+};
+
+type GetProfileError = variant {
+  userNotAuthenticated;
+  profileNotFound;
+};
+
+type GetProfileResponse = variant {
+  ok: Profile;
+  err: GetProfileError;
+};
+
+type CreateProfileError = variant {
+  profileAlreadyExists;
+  userNotAuthenticated;
+};
+
+type CreateProfileResponse = variant {
+  ok: bool;
+  err: CreateProfileError;
+};
+
+service : {
+  getProfile: query () -> async GetProfileResponse;
+  createProfile: (text, text) -> async CreateProfileResponse;
+  mint: (principal, text) -> async text;
+  verify: (text) -> async bool;
+}
